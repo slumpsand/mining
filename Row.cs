@@ -20,8 +20,9 @@ public class Row
 
     public void AddRoom(Room room)
     {
-        // create the sprite
-        GameManager.map.AddTile(room.SpriteName, new Vector2(Size() * 100, index * 100));
+        // create the tile
+        int column = (side.isRight) ? Size() : -Size();
+        GameManager.map.AddTile(room.SpriteName, new Vector2(column, index));
 
         // add the room to the list
         room.row = this;

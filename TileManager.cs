@@ -11,7 +11,7 @@ public class TileManager : MonoBehaviour
     public List<SpriteEntry> sprites;
 
     private static TileManager _instance;
-    private static TileManager instance
+    public static TileManager instance
     {
         get
         {
@@ -30,12 +30,16 @@ public class TileManager : MonoBehaviour
         if (entry == null) return null;
 
         // spawn the sprites
-        Image active = Instantiate(entry.active, transform);
-        Image notactive = Instantiate(entry.notactive, transform);
+        SpriteRenderer active = (SpriteRenderer)new GameObject(name + "_active").AddComponent(typeof(SpriteRenderer));
+        SpriteRenderer notactive = (SpriteRenderer)new GameObject(name + "_notactive").AddComponent(typeof(SpriteRenderer));
 
         // deactivate them
         active.enabled = false;
         notactive.enabled = false;
+
+        // set the sprites
+        active.sprite = entry.active;
+        notactive.sprite = entry.notactive;
 
         // return the tile
         return new Tile(active, notactive);
@@ -45,9 +49,9 @@ public class TileManager : MonoBehaviour
     public class SpriteEntry
     {
         public string name;
-        public Image active, notactive;
+        public Sprite active, notactive;
 
-        public SpriteEntry(string name, Image active, Image nonactive)
+        public SpriteEntry(string name, Sprite active, Sprite nonactive)
         {
             this.name = name;
             this.active = active;

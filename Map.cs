@@ -16,8 +16,8 @@ public class Map
     {
         tiles = new List<Tile>();
 
-        left_rooms = new Side(this);
-        right_rooms = new Side(this);
+        left_rooms = new Side(this, false);
+        right_rooms = new Side(this, true);
     }
 
     private bool wasActiveOnLastFrame = false;
@@ -41,10 +41,14 @@ public class Map
 
     public void AddTile(string name, Vector2 position)
     {
+        if (position.x >= 0) position.x += 1;
         Tile tile = TileManager.GetTile(name);
 
-        tile.active.transform.position += new Vector3(position.x, 0, position.y);
-        tile.notactive.transform.position += new Vector3(position.x, 0, position.y);
+        tile.active.transform.parent = TileManager.instance.transform;
+        tile.notactive.transform.parent = TileManager.instance.transform;
+
+        tile.active.transform.position = new Vector3(position.x, -position.y);
+        tile.notactive.transform.position = new Vector3(position.x, -position.y);
 
         tiles.Add(tile);
     }

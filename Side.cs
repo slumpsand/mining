@@ -3,15 +3,18 @@
 public class Side
 {
 
+    public readonly bool isRight;
+
     public Map map;
 
     private List<Row> rows;
 
-    public Side(Map map)
+    public Side(Map map, bool isRight)
     {
         this.map = map;
+        this.isRight = isRight;
 
-        this.rows = new List<Row>();
+        rows = new List<Row>();
     }
 
     public int Count

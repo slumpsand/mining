@@ -4,10 +4,10 @@ using UnityEngine.UI;
 public class Tile
 {
 
-    public Image active;
-    public Image notactive;
+    public SpriteRenderer active;
+    public SpriteRenderer notactive;
 
-    public Tile(Image active, Image notactive)
+    public Tile(SpriteRenderer active, SpriteRenderer notactive)
     {
         active.enabled = false;
         active.enabled = false;
