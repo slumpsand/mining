@@ -6,6 +6,7 @@ public class Init : MonoBehaviour
 {
     void Start()
     {
+        GameManager.map.Setup();
         GameManager.map.AddEmptyRow();
         GameManager.map.AddEmptyRow();
 

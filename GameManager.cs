@@ -62,7 +62,7 @@ public class GameManager : MonoBehaviour
 
     private float tileLastUpdateTime;
     private float roomLastUpdateTime;
-    public void Update()
+    void Update()
     {
         if (Time.time - tileLastUpdateTime >= tileUpdateDelay)
         {
@@ -77,6 +77,11 @@ public class GameManager : MonoBehaviour
 
             map.UpdateRooms();
         }
+    }
+
+    void Start()
+    {
+        map.Setup();
     }
 
 }

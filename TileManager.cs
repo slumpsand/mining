@@ -37,6 +37,10 @@ public class TileManager : MonoBehaviour
         active.enabled = false;
         notactive.enabled = false;
 
+        // set the parent object
+        active.transform.parent = transform;
+        notactive.transform.parent = transform;
+
         // set the sprites
         active.sprite = entry.active;
         notactive.sprite = entry.notactive;

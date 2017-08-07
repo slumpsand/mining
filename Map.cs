@@ -11,13 +11,22 @@ public class Map
     private Side right_rooms;
 
     private List<Tile> tiles;
+    private Tile drillhead;
 
     public Map()
     {
-        tiles = new List<Tile>();
+        tiles = new List<Tile> ();
 
         left_rooms = new Side(this, false);
         right_rooms = new Side(this, true);
+    }
+
+    public void Setup()
+    {
+        drillhead = TileManager.GetTile("drillhead");
+        drillhead.SetPosition(-1, 0);
+
+        tiles.Add(drillhead);
     }
 
     private bool wasActiveOnLastFrame = false;
@@ -35,21 +44,25 @@ public class Map
 
     public void AddEmptyRow()
     {
+        // add the row to the sides
         left_rooms.AddEmptyRow();
         right_rooms.AddEmptyRow();
+
+        // add the shaft room
+        int levels = left_rooms.Count;
+        Tile tile = TileManager.GetTile("shaft");
+        tile.SetPosition(-1, levels - 1);
+        tiles.Add(tile);
+
+        // move the drillhead
+        drillhead.SetPosition(-1, levels);
     }
 
-    public void AddTile(string name, Vector2 position)
+    public void AddTile(string name, int x, int y)
     {
-        if (position.x >= 0) position.x += 1;
         Tile tile = TileManager.GetTile(name);
-
-        tile.active.transform.parent = TileManager.instance.transform;
-        tile.notactive.transform.parent = TileManager.instance.transform;
-
-        tile.active.transform.position = new Vector3(position.x, -position.y);
-        tile.notactive.transform.position = new Vector3(position.x, -position.y);
-
+        tile.SetPosition(x, y);
+        
         tiles.Add(tile);
     }
 
