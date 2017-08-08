@@ -7,16 +7,19 @@ public class Map : MonoBehaviour
     public Side Left { get { return sides.Left; } }
     public Side Right { get { return sides.Right; } }
 
+    public Action<Room> RoomAddedEvent;
+
     Pair<Side, Side> sides;
     Action<int> SetDrillhead;
     int currentRow;
 
-    void Start()
+    void Awake()
     {
         // initilize variables
-        sides = new Pair<Side, Side>( new Side(this, false),  new Side(this, true) );
+        RoomAddedEvent = (_) => { };
+        sides = new Pair<Side, Side>(new Side(this, false), new Side(this, true));
 
-        { 
+        {
             // initialize the drillhead
             Tile drillhead = REF.tile.CreateTile("drillhead");
             SetDrillhead = (int row) => drillhead.SetPosition(0, row);

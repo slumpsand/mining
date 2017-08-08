@@ -1,7 +1,12 @@
-﻿public class Pair<A, B>
+﻿using System;
+
+[Serializable]
+public class Pair<A, B>
 {
     public A Left;
     public B Right;
+
+    public Pair() { }
 
     public Pair(A left, B right)
     {

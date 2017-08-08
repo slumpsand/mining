@@ -1,8 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
 
-public class Row
+public class Row : IEnumerable
 {
 
     public Side side;
@@ -24,6 +24,8 @@ public class Row
 
         room.row = this;
         rooms.Add(room);
+        
+        REF.map.RoomAddedEvent(room);
     }
 
     public int Count()
@@ -39,6 +41,11 @@ public class Row
     public void UpdateRooms()
     {
         rooms.ForEach(room => room.UpdateRoom());
+    }
+
+    public IEnumerator GetEnumerator()
+    {
+        return rooms.GetEnumerator();
     }
 
     public Room this[int index]

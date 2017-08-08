@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 
-public class Side
+public class Side : IEnumerable
 {
 
     public readonly bool isRight;
@@ -29,6 +30,11 @@ public class Side
     public void AddEmptyRow()
     {
         rows.Add(new Row(this, Count));
+    }
+
+    public IEnumerator GetEnumerator()
+    {
+        return rows.GetEnumerator();
     }
 
     public Row this[int index]
