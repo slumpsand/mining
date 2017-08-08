@@ -6,17 +6,15 @@ public class Init : MonoBehaviour
 {
     void Start()
     {
-        Map.AddEmptyRow();
-
-        GameManager.map.AddEmptyRow();
-        GameManager.map.AddEmptyRow();
+        REF.map.AddEmptyRow();
+        REF.map.AddEmptyRow();
 
         List<Room> row1 = new List<Room> { new MineRoom(), new BedRoom() };
         List<Room> row2 = new List<Room> { new ResearchRoom(), new MineRoom() };
         List<Room> row3 = new List<Room> { new BedRoom(), new ResearchRoom() };
 
-        row1.ForEach(room => GameManager.map.Right[0].AddRoom(room));
-        row2.ForEach(room => GameManager.map.Left[0].AddRoom(room));
-        row3.ForEach(room => GameManager.map.Right[1].AddRoom(room));
+        row1.ForEach(room => REF.map.Right[0].AddRoom(room));
+        row2.ForEach(room => REF.map.Left[0].AddRoom(room));
+        row3.ForEach(room => REF.map.Right[1].AddRoom(room));
     }
 }

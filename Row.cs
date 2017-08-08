@@ -22,7 +22,7 @@ public class Row
     {
         // create the tile
         int column = (side.isRight) ? Size() : -Size();
-        GameManager.map.AddTile(room.SpriteName, column, index);
+        REF.tile.AddTile(room.SpriteName, column, index);
 
         // add the room to the list
         room.row = this;

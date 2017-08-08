@@ -4,51 +4,56 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 
-[RequireComponent(typeof(Map))]
 public class TileManager : MonoBehaviour
 {
 
-    public List<Entry> sprites;
+    public int activeSortingOrder = 2;
+    public int notactiveSortingOrder = 1;
+    public List<SpriteEntry> sprites = new List<SpriteEntry>();
 
-    void Start()
+    List<SpriteRenderer> activeSprites = new List<SpriteRenderer>();
+
+    SpriteRenderer CreateSpriteRenderer(Sprite sprite, bool isActive)
     {
-        sprites = new List<Entry>();
+        var renderer = (SpriteRenderer)new GameObject().AddComponent(typeof(SpriteRenderer));
+
+        renderer.enabled = !isActive;
+        renderer.transform.parent = transform;
+        renderer.sprite = sprite;
+        renderer.sortingOrder = (isActive) ? activeSortingOrder : notactiveSortingOrder;
+
+        if(isActive) activeSprites.Add(renderer);
+        return renderer;
     }
 
-    public static Tile GetTile(string name)
+    /// <exception cref="SpriteNotRegisteredException" />
+    public Tile CreateTile(string name)
     {
-        var entry = instance.sprites.FirstOrDefault(e => e.name == name);
-        if (entry == null) return null;
+        SpriteEntry entry;
+        try
+        {
+            entry = sprites.First(e => e.name == name);
+        } catch (InvalidOperationException inner) {
+            throw new SpriteNotRegisteredException(name, inner);
+        }
 
-        var active = entry.active.CreateSpriteRenderer();
-        var notactive = entry.notactive.CreateSpriteRenderer();
-
+        var active = CreateSpriteRenderer(entry.active, true);
+        var notactive = CreateSpriteRenderer(entry.notactive, false);
+        
         return new Tile(active, notactive);
     }
 
-    bool wasAcitveOnLastFrame;
-    public static void UpdateTiles()
+    bool wasActiveOnLastFrame;
+    public void UpdateTiles()
     {
-        instance.tiles.ForEach(tile => tile.SetActive(!instance.wasAcitveOnLastFrame));
-        instance.wasAcitveOnLastFrame = !instance.wasAcitveOnLastFrame;
+        wasActiveOnLastFrame = !wasActiveOnLastFrame;
+        activeSprites.ForEach(s => s.enabled = wasActiveOnLastFrame);
     }
 
-    [Serializable]
-    public class Entry
+    public void AddTile(string name, int column, int row)
     {
-        public string name;
-        public Sprite active;
-        public Sprite notactive;
-    }
-
-    private static TileManager _instance;
-    public static TileManager instance
-    {
-        get
-        {
-            if (_instance == null) _instance = FindObjectOfType<TileManager>();
-            return _instance;
-        }
+        Tile tile = CreateTile(name);
+        tile.SetPosition(column, row);
     }
 
 }

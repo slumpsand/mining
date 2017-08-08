@@ -18,7 +18,7 @@ public class Map : MonoBehaviour
 
         { 
             // initialize the drillhead
-            Tile drillhead = TileManager.GetTile("drillhead");
+            Tile drillhead = REF.tile.CreateTile("drillhead");
             SetDrillhead = (int row) => drillhead.SetPosition(-1, row);
             SetDrillhead(0);
         }
@@ -34,8 +34,8 @@ public class Map : MonoBehaviour
     {
         Left.AddEmptyRow();
         Right.AddEmptyRow();
-        
-        TileManager.GetTile("shaft").SetPosition(-1, currentRow - 1);
+
+        REF.tile.CreateTile("shaft").SetPosition(-1, currentRow);
 
         SetDrillhead(++currentRow);
     }
