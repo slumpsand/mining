@@ -20,11 +20,8 @@ public class Row
 
     public void AddRoom(Room room)
     {
-        // create the tile
-        int column = (side.isRight) ? Size() : -Size();
-        REF.tile.AddTile(room.SpriteName, column, index);
+        REF.tile.AddTile(room.SpriteName, side.isRight, Size(), index, room.Size);
 
-        // add the room to the list
         room.row = this;
         rooms.Add(room);
     }

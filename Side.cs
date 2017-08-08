@@ -4,7 +4,6 @@ public class Side
 {
 
     public readonly bool isRight;
-
     public Map map;
 
     private List<Row> rows;

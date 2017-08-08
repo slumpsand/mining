@@ -50,10 +50,17 @@ public class TileManager : MonoBehaviour
         activeSprites.ForEach(s => s.enabled = wasActiveOnLastFrame);
     }
 
-    public void AddTile(string name, int column, int row)
+    public void AddTile(string name, bool isRight, int column, int row, int size)
     {
         Tile tile = CreateTile(name);
-        tile.SetPosition(column, row);
+
+        if (isRight)
+        {
+            tile.SetPosition(column + 1, row);
+        } else
+        {
+            tile.SetPosition(-column - size, row);
+        }
     }
 
 }

@@ -24,8 +24,6 @@ public class Tile
 
     public void SetPosition(int x, int y)
     {
-        if (x > 0) x++;
-
         active.transform.position = new Vector3(x, -y);
         notactive.transform.position = new Vector3(x, -y);
     }

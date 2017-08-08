@@ -9,12 +9,26 @@ public class Init : MonoBehaviour
         REF.map.AddEmptyRow();
         REF.map.AddEmptyRow();
 
-        List<Room> row1 = new List<Room> { new MineRoom(), new BedRoom() };
-        List<Room> row2 = new List<Room> { new ResearchRoom(), new MineRoom() };
-        List<Room> row3 = new List<Room> { new BedRoom(), new ResearchRoom() };
+        RowLeft1();
+        RowRight2();
+        RowRight1();
+    }
 
-        row1.ForEach(room => REF.map.Right[0].AddRoom(room));
-        row2.ForEach(room => REF.map.Left[0].AddRoom(room));
-        row3.ForEach(room => REF.map.Right[1].AddRoom(room));
+    void RowLeft1()
+    {
+        var rooms = new List<Room> { new BedRoom(), new MineRoom() };
+        rooms.ForEach(room => REF.map.Left[0].AddRoom(room));
+    }
+
+    void RowRight1()
+    {
+       var rooms = new List<Room> { new ResearchRoom(), new MineRoom() };
+        rooms.ForEach(room => REF.map.Right[0].AddRoom(room));
+    }
+
+    void RowRight2()
+    {
+        var rooms = new List<Room> { new BedRoom(), new ResearchRoom() };
+        rooms.ForEach(room => REF.map.Right[1].AddRoom(room));
     }
 }
