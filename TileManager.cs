@@ -1,14 +1,45 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 
+using System.Linq;
 using System.Collections.Generic;
 using System;
-using System.Linq;
 
+[RequireComponent(typeof(Map))]
 public class TileManager : MonoBehaviour
 {
 
-    public List<SpriteEntry> sprites;
+    public List<Entry> sprites;
+
+    void Start()
+    {
+        sprites = new List<Entry>();
+    }
+
+    public static Tile GetTile(string name)
+    {
+        var entry = instance.sprites.FirstOrDefault(e => e.name == name);
+        if (entry == null) return null;
+
+        var active = entry.active.CreateSpriteRenderer();
+        var notactive = entry.notactive.CreateSpriteRenderer();
+
+        return new Tile(active, notactive);
+    }
+
+    bool wasAcitveOnLastFrame;
+    public static void UpdateTiles()
+    {
+        instance.tiles.ForEach(tile => tile.SetActive(!instance.wasAcitveOnLastFrame));
+        instance.wasAcitveOnLastFrame = !instance.wasAcitveOnLastFrame;
+    }
+
+    [Serializable]
+    public class Entry
+    {
+        public string name;
+        public Sprite active;
+        public Sprite notactive;
+    }
 
     private static TileManager _instance;
     public static TileManager instance
@@ -17,49 +48,6 @@ public class TileManager : MonoBehaviour
         {
             if (_instance == null) _instance = FindObjectOfType<TileManager>();
             return _instance;
-        }
-    }
-
-    public static Tile GetTile(string name)
-    { return instance._GetTile(name); }
-
-    private Tile _GetTile(string name)
-    {
-        // select the correct sprites
-        SpriteEntry entry = instance.sprites.FirstOrDefault(en => en.name == name);
-        if (entry == null) return null;
-
-        // spawn the sprites
-        SpriteRenderer active = (SpriteRenderer)new GameObject(name + "_active").AddComponent(typeof(SpriteRenderer));
-        SpriteRenderer notactive = (SpriteRenderer)new GameObject(name + "_notactive").AddComponent(typeof(SpriteRenderer));
-
-        // deactivate them
-        active.enabled = false;
-        notactive.enabled = false;
-
-        // set the parent object
-        active.transform.parent = transform;
-        notactive.transform.parent = transform;
-
-        // set the sprites
-        active.sprite = entry.active;
-        notactive.sprite = entry.notactive;
-
-        // return the tile
-        return new Tile(active, notactive);
-    }
-
-    [Serializable]
-    public class SpriteEntry
-    {
-        public string name;
-        public Sprite active, notactive;
-
-        public SpriteEntry(string name, Sprite active, Sprite nonactive)
-        {
-            this.name = name;
-            this.active = active;
-            this.notactive = nonactive;
         }
     }
 

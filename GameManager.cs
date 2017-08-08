@@ -3,20 +3,9 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    Map _map;
-
-    public static Map map
-    {
-        get { return instance._map; }
-    }
 
     public float tileUpdateDelay = 0.5f;
     public float roomUpdateDelay = 0.5f;
-
-    private GameManager()
-    {
-        _map = new Map();
-    }
 
     private static GameManager _instance;
     private static GameManager instance
@@ -68,20 +57,15 @@ public class GameManager : MonoBehaviour
         {
             tileLastUpdateTime = Time.time;
 
-            map.UpdateTiles();
+            REF.tile.UpdateTiles();
         }
 
         if (Time.time - roomLastUpdateTime >= roomUpdateDelay)
         {
             roomLastUpdateTime = Time.time;
 
-            map.UpdateRooms();
+            REF.map.UpdateRooms();
         }
-    }
-
-    void Start()
-    {
-        map.Setup();
     }
 
 }

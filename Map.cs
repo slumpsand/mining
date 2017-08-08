@@ -1,69 +1,43 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using System;
 
-public class Map
+public class Map : MonoBehaviour
 {
 
-    public Side Left { get { return left_rooms; } }
-    public Side Right { get { return right_rooms; } }
+    public Side Left { get { return sides.Left; } }
+    public Side Right { get { return sides.Right; } }
 
-    private Side left_rooms;
-    private Side right_rooms;
+    Pair<Side, Side> sides;
+    Action<int> SetDrillhead;
+    int currentRow;
 
-    private List<Tile> tiles;
-    private Tile drillhead;
-
-    public Map()
+    void Start()
     {
-        tiles = new List<Tile> ();
+        // initilize variables
+        sides = new Pair<Side, Side>( new Side(this, false),  new Side(this, true) );
 
-        left_rooms = new Side(this, false);
-        right_rooms = new Side(this, true);
-    }
-
-    public void Setup()
-    {
-        drillhead = TileManager.GetTile("drillhead");
-        drillhead.SetPosition(-1, 0);
-
-        tiles.Add(drillhead);
-    }
-
-    private bool wasActiveOnLastFrame = false;
-    public void UpdateTiles()
-    {
-        tiles.ForEach(tile => tile.SetActive(!wasActiveOnLastFrame));
-        wasActiveOnLastFrame = !wasActiveOnLastFrame;
+        { 
+            // initialize the drillhead
+            Tile drillhead = TileManager.GetTile("drillhead");
+            SetDrillhead = (int row) => drillhead.SetPosition(-1, row);
+            SetDrillhead(0);
+        }
     }
 
     public void UpdateRooms()
     {
-        left_rooms.UpdateRooms();
-        right_rooms.UpdateRooms();
+        Left.UpdateRooms();
+        Right.UpdateRooms();
     }
 
     public void AddEmptyRow()
     {
-        // add the row to the sides
-        left_rooms.AddEmptyRow();
-        right_rooms.AddEmptyRow();
-
-        // add the shaft room
-        int levels = left_rooms.Count;
-        Tile tile = TileManager.GetTile("shaft");
-        tile.SetPosition(-1, levels - 1);
-        tiles.Add(tile);
-
-        // move the drillhead
-        drillhead.SetPosition(-1, levels);
-    }
-
-    public void AddTile(string name, int x, int y)
-    {
-        Tile tile = TileManager.GetTile(name);
-        tile.SetPosition(x, y);
+        Left.AddEmptyRow();
+        Right.AddEmptyRow();
         
-        tiles.Add(tile);
+        TileManager.GetTile("shaft").SetPosition(-1, currentRow - 1);
+
+        SetDrillhead(++currentRow);
     }
 
 }
