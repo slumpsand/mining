@@ -7,7 +7,7 @@ public class CameraController : MonoBehaviour
     public float cameraZoomSpeed = 10f;
     [Space]
     public Vector2 cameraPosLimit = new Vector2(-20.5f, 0.5f);
-    public Vector2 cameraSizeLimit = new Vector2(5, 10);
+    public Vector2 cameraSizeLimit = new Vector2(4, 6.5f);
 
     Vector2 maxScrollBuild;    Camera cam;
 
@@ -19,12 +19,23 @@ public class CameraController : MonoBehaviour
 
     void Start()
     {
-        REF.map.RoomAddedEvent += (room) => CalculateMaxScroll();
+        REF.map.RoomAddedEvent += (_) => CalculateMaxScroll();
     }
     void Update()
     {
         MoveCamera();
         ZoomCamera();
+
+        if(Input.GetMouseButtonUp(1))
+        {
+            Focus(Input.mousePosition);
+        }
+    }
+
+    void Focus(Vector2 screenPos)
+    {
+        Vector3 point = cam.ScreenToWorldPoint(screenPos);
+        transform.position = ClampCameraPosition(point);
     }
 
     void MoveCamera()
@@ -33,20 +44,25 @@ public class CameraController : MonoBehaviour
         Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
         Vector2 delta = input * cameraZoomSpeed * Time.deltaTime;
         Vector3 pos = transform.position + new Vector3(delta.x, delta.y);
+        
+        // set the new position
+        transform.position = ClampCameraPosition(pos);
+    }
 
-        // limit the camera movement on x / y axis
+    Vector3 ClampCameraPosition(Vector3 pos)
+    {
         pos.x = Mathf.Clamp(pos.x, maxScrollBuild.x, maxScrollBuild.y);
         pos.y = Mathf.Clamp(pos.y, cameraPosLimit.x, cameraPosLimit.y);
+        pos.z = transform.position.z;
 
-        // set the new position
-        transform.position = pos;
+        return pos;
     }
 
     void ZoomCamera()
     {
         // calculate the new camera size / zoom
         float zoomInput = Input.GetAxisRaw("Zoom");
-        float size = cam.orthographicSize + cameraZoomSpeed * Time.deltaTime * zoomInput;
+        float size = cam.orthographicSize + cameraZoomSpeed * Time.deltaTime * -zoomInput;
 
         // limit the camera zoom
         cam.orthographicSize = Mathf.Clamp(size, cameraSizeLimit.x, cameraSizeLimit.y);
@@ -54,9 +70,11 @@ public class CameraController : MonoBehaviour
 
     void CalculateMaxScroll()
     {
+        // find the maximum room usage on the left / right
         float leftMaxSize = REF.map.Left.FindMaxSize();
         float rightMaxSize = REF.map.Right.FindMaxSize();
 
+        // add some offsets
         maxScrollBuild = new Vector2(-leftMaxSize - 0.5f, rightMaxSize + 1.5f);
     }
 
