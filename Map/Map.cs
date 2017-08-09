@@ -8,6 +8,7 @@ public class Map : MonoBehaviour
     public Side Right { get { return sides.Right; } }
 
     public Action<Room> RoomAddedEvent;
+    public int diamondLevel = 20;
     
     Pair<int, int> shopPosition;
 
@@ -20,7 +21,10 @@ public class Map : MonoBehaviour
         // initilize variables
         RoomAddedEvent = (_) => { };
         sides = new Pair<Side, Side>(new Side(this, false), new Side(this, true));
+
+        // create static tiles
         CreateShop();
+        CreateTarget();
 
         {
             // initialize the drillhead
@@ -52,6 +56,14 @@ public class Map : MonoBehaviour
 
         Tile shop = REF.tile.CreateTile("base");
         shop.SetPosition(shopPosition.Left, shopPosition.Right);
+    }
+
+    void CreateTarget()
+    {
+        Tile target = REF.tile.CreateTile("target");
+
+        target.active.transform.position = new Vector3(-1, -diamondLevel, 1);
+        target.notactive.transform.position = new Vector3(-1, -diamondLevel, 1);
     }
 
 }

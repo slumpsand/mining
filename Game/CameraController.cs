@@ -6,9 +6,11 @@ public class CameraController : MonoBehaviour
     public float cameraMovementSpeed = 10f;
     public float cameraZoomSpeed = 10f;
     [Space]
-    public Vector2 cameraPosLimit = new Vector2(-20.5f, 0.5f);
+    public float cameraMaxHeight = 0.5f;
+    public float bottomCameraOffset = 3f;
     public Vector2 cameraSizeLimit = new Vector2(4, 6.5f);
 
+    float cameraMinHeight;
     Vector2 maxScrollBuild;    Camera cam;
 
     void Awake()
@@ -20,6 +22,9 @@ public class CameraController : MonoBehaviour
     void Start()
     {
         REF.map.RoomAddedEvent += (_) => CalculateMaxScroll();
+
+        float cameraMinHeight = -(REF.map.diamondLevel - bottomCameraOffset);
+        this.cameraMinHeight = (cameraMinHeight > -0.5f) ? -0.5f : cameraMinHeight;
     }
     void Update()
     {
@@ -52,7 +57,7 @@ public class CameraController : MonoBehaviour
     Vector3 ClampCameraPosition(Vector3 pos)
     {
         pos.x = Mathf.Clamp(pos.x, maxScrollBuild.x, maxScrollBuild.y);
-        pos.y = Mathf.Clamp(pos.y, cameraPosLimit.x, cameraPosLimit.y);
+        pos.y = Mathf.Clamp(pos.y, cameraMinHeight, cameraMaxHeight);
         pos.z = transform.position.z;
 
         return pos;
