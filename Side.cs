@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 
-public class Side : IEnumerable
+public class Side
 {
 
     public readonly bool isRight;
@@ -32,17 +32,24 @@ public class Side : IEnumerable
         rows.Add(new Row(this, Count));
     }
 
-    public IEnumerator GetEnumerator()
-    {
-        return rows.GetEnumerator();
-    }
-
     public Row this[int index]
     {
         get
         {
             return rows[index];
         }
+    }
+
+    public int FindMaxSize()
+    {
+        int maxSize = 0;
+        foreach(var row in rows)
+        {
+            int size = row.Size();
+            maxSize = (size > maxSize) ? size : maxSize;
+        }
+
+        return maxSize;
     }
 
 }

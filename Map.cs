@@ -8,6 +8,8 @@ public class Map : MonoBehaviour
     public Side Right { get { return sides.Right; } }
 
     public Action<Room> RoomAddedEvent;
+    
+    Pair<int, int> shopPosition;
 
     Pair<Side, Side> sides;
     Action<int> SetDrillhead;
@@ -18,6 +20,7 @@ public class Map : MonoBehaviour
         // initilize variables
         RoomAddedEvent = (_) => { };
         sides = new Pair<Side, Side>(new Side(this, false), new Side(this, true));
+        CreateShop();
 
         {
             // initialize the drillhead
@@ -41,6 +44,14 @@ public class Map : MonoBehaviour
         REF.tile.CreateTile("shaft").SetPosition(0, currentRow);
 
         SetDrillhead(++currentRow);
+    }
+
+    void CreateShop()
+    {
+        shopPosition = new Pair<int, int>(-1, -2);
+
+        Tile shop = REF.tile.CreateTile("base");
+        shop.SetPosition(shopPosition.Left, shopPosition.Right);
     }
 
 }
