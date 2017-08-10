@@ -22,7 +22,7 @@ public class Tile
         notactive.enabled = !isActive;
     }
 
-    public void SetPosition(int x, int y)
+    public void SetPosition(float x, float y)
     {
         active.transform.position = new Vector3(x, -y);
         notactive.transform.position = new Vector3(x, -y);

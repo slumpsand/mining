@@ -1,84 +1,99 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class Background : MonoBehaviour
 {
-   
+
+    public float zPosition = 2f;
+
+    [Header("Diamond Block")]
+    public float blockOffset = 3f;
+
+    [Header("Background Sprites")]
     public Sprite groundSprite;
     public Sprite skySprite;
     public Sprite grassSprite;
     public Sprite diamondSprite;
 
-    public int minTilesLeft = 3;
-    public int minTilesRight = 3;
-
-    List<GameObject> tiles;
+    Pair<int, int> minTiles;
+    Pair<int, int> doneTiles;
+    bool isBlockPlaced;
 
     void Awake()
     {
-        tiles = new List<GameObject>();
+        doneTiles = new Pair<int, int>();
     }
 
     void Start()
     {
+        CalculateMinTiles();
+
         RecalculateBackground();
         REF.map.RoomAddedEvent += (_) => RecalculateBackground();
     }
 
     void RecalculateBackground()
     {
-        int maxLeft = REF.map.Left.FindMaxSize();
-        int maxRight = REF.map.Right.FindMaxSize();
+        float grassHeight = grassSprite.rect.width / grassSprite.pixelsPerUnit;
+        var maxSize = REF.map.FindMaxSize();
 
-        int placeLeft = minTilesLeft + maxLeft / 5;
-        int placeRight = minTilesRight-1 + maxRight / 5;
+        var doTiles = new Pair<int, int>(
+            minTiles.Left + maxSize.Left / 5 - doneTiles.Left,
+            minTiles.Right + maxSize.Right / 5 - doneTiles.Right
+        );
 
-        List<GameObject> newtiles = new List<GameObject>();
+        new Counter(doTiles.Left - doneTiles.Left).ForEach(i => CreateColumn(-5 * i));
+        new Counter(doTiles.Right - doneTiles.Right).ForEach(i => CreateColumn(5 * (i + 1)));
 
-        for(int i=0; i<placeLeft; i++)
+        doneTiles = new Pair<int, int>(
+            doneTiles.Left + doTiles.Left,
+            doneTiles.Right + doTiles.Right
+        );
+
+        if (!isBlockPlaced)
         {
-            newtiles.AddRange(CreateColumn(i * -5));
-        }
+            isBlockPlaced = true;
 
-        for(int i=0; i<placeRight; i++)
-        {
-            newtiles.AddRange(CreateColumn(i * 5 + 5));
+            REF.tile.CreateTile("target")
+                .SetPosition(-1, REF.map.diamondLevel - blockOffset + grassHeight);
         }
-
-        foreach(var tile in tiles)
-        {
-            Destroy(tile);
-        }
-
-        tiles = newtiles;
     }
 
-    List<GameObject> CreateColumn(float x)
+    void CreateColumn(float xvalue)
     {
-        List<GameObject> newtiles = new List<GameObject>();
+        float grassHeight = grassSprite.rect.width / grassSprite.pixelsPerUnit;
+        int groundCount = REF.map.diamondLevel / 5 - 2;
 
-        newtiles.Add(CreateTile(x, 5f, skySprite));
-        newtiles.Add(CreateTile(x, 0, grassSprite));
+        CreateTile(xvalue, - 5, skySprite);
+        CreateTile(xvalue, 0, grassSprite);
 
-        for (int i=1; i<(REF.map.diamondLevel / 5); i++)
+        for (int i = 0; i < groundCount; i++)
         {
-            newtiles.Add(CreateTile(x, i * -5, groundSprite));
+            CreateTile(xvalue, i * 5 + grassHeight, groundSprite);
         }
 
-        newtiles.Add(CreateTile(x, -REF.map.diamondLevel, diamondSprite));
-
-        return newtiles;
+        CreateTile(xvalue, (groundCount + 1) * 5, diamondSprite);
     }
 
-    GameObject CreateTile(float x, float y, Sprite sprite)
+    int currentTileIndex;
+    void CreateTile(float xvalue, float yvalue, Sprite sprite)
     {
-        var renderer = (SpriteRenderer)new GameObject().AddComponent(typeof(SpriteRenderer));
+        var renderer = (SpriteRenderer)new GameObject((currentTileIndex++).ToString("0000"))
+            .AddComponent(typeof(SpriteRenderer));
 
-        renderer.transform.position = new Vector3(x, y + 1.25f, 2);
+        renderer.transform.position = new Vector3(xvalue, -yvalue, zPosition);
         renderer.transform.parent = transform;
         renderer.sprite = sprite;
+    }
 
-        return renderer.gameObject;
+    void CalculateMinTiles()
+    {
+        Camera cam = REF.cam.GetComponent<Camera>();
+        minTiles = new Pair<int, int>(
+            Mathf.FloorToInt(cam.orthographicSize / 5),
+            Mathf.FloorToInt((cam.orthographicSize * cam.aspect) / 5)
+        );
     }
 
 }

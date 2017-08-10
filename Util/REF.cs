@@ -33,4 +33,24 @@ public class REF : MonoBehaviour
         }
     }
 
+    static ConfigManager _config;
+    public static ConfigManager config
+    {
+        get
+        {
+            if (_config == null) _config = FindObjectOfType<ConfigManager>();
+            return _config;
+        }
+    }
+
+    static CameraController _cam;
+    public static CameraController cam
+    {
+        get
+        {
+            if (_cam == null) _cam = FindObjectOfType<CameraController>();
+            return _cam;
+        }
+    }
+
 }

@@ -9,8 +9,6 @@ public class Map : MonoBehaviour
 
     public Action<Room> RoomAddedEvent;
     public int diamondLevel = 20;
-    
-    Pair<int, int> shopPosition;
 
     Pair<Side, Side> sides;
     Action<int> SetDrillhead;
@@ -24,7 +22,7 @@ public class Map : MonoBehaviour
 
         // create static tiles
         CreateShop();
-        CreateTarget();
+        CreateLandingSite();
 
         {
             // initialize the drillhead
@@ -52,18 +50,23 @@ public class Map : MonoBehaviour
 
     void CreateShop()
     {
-        shopPosition = new Pair<int, int>(-1, -2);
-
         Tile shop = REF.tile.CreateTile("base");
-        shop.SetPosition(shopPosition.Left, shopPosition.Right);
+        shop.SetPosition(-1, -3.25f);
     }
 
-    void CreateTarget()
-    {
-        Tile target = REF.tile.CreateTile("target");
 
-        target.active.transform.position = new Vector3(-1, -diamondLevel, 1);
-        target.notactive.transform.position = new Vector3(-1, -diamondLevel, 1);
+    void CreateLandingSite()
+    {
+        Tile landing = REF.tile.CreateTile("landing");
+        landing.SetPosition(-3, -2.25f);
+    }
+
+    public Pair<int, int> FindMaxSize()
+    {
+        return new Pair<int, int>(
+            Left.FindMaxSize(),
+            Right.FindMaxSize()
+        );
     }
 
 }

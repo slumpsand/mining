@@ -2,16 +2,19 @@
 
 [RequireComponent(typeof(Camera))]
 public class CameraController : MonoBehaviour
-{    
+{
+    
     public float cameraMovementSpeed = 10f;
-    public float cameraZoomSpeed = 10f;
+    public float cameraZoomSpeed = 10f;
+
     [Space]
     public float cameraMaxHeight = 0.5f;
     public float bottomCameraOffset = 3f;
     public Vector2 cameraSizeLimit = new Vector2(4, 6.5f);
 
     float cameraMinHeight;
-    Vector2 maxScrollBuild;    Camera cam;
+    Vector2 maxScrollBuild;
+    Camera cam;
 
     void Awake()
     {
@@ -25,7 +28,8 @@ public class CameraController : MonoBehaviour
 
         float cameraMinHeight = -(REF.map.diamondLevel - bottomCameraOffset);
         this.cameraMinHeight = (cameraMinHeight > -0.5f) ? -0.5f : cameraMinHeight;
-    }
+    }
+
     void Update()
     {
         MoveCamera();
