@@ -3,6 +3,7 @@ public abstract class Room
 {
 
     public Row row;
+    public int index;
 
     public readonly int Size;
     public readonly string SpriteName;

@@ -10,12 +10,13 @@ public class TileManager : MonoBehaviour
     public int activeSortingOrder = 2;
     public int notactiveSortingOrder = 1;
     public List<SpriteEntry> sprites = new List<SpriteEntry>();
-
+    
     List<SpriteRenderer> activeSprites = new List<SpriteRenderer>();
 
     SpriteRenderer CreateSpriteRenderer(Sprite sprite, bool isActive)
     {
-        var renderer = (SpriteRenderer)new GameObject().AddComponent(typeof(SpriteRenderer));
+        var renderer = (SpriteRenderer)new GameObject(activeSprites.Count.ToString("0000"))
+            .AddComponent(typeof(SpriteRenderer));
 
         renderer.enabled = !isActive;
         renderer.transform.parent = transform;
@@ -50,7 +51,7 @@ public class TileManager : MonoBehaviour
         activeSprites.ForEach(s => s.enabled = wasActiveOnLastFrame);
     }
 
-    public void AddTile(string name, bool isRight, int column, int row, int size)
+    public void AddTile(string name, bool isRight, float column, float row, int size)
     {
         Tile tile = CreateTile(name);
 

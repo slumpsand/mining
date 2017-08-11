@@ -16,13 +16,17 @@ public class Background : MonoBehaviour
     public Sprite grassSprite;
     public Sprite diamondSprite;
 
-    Pair<int, int> minTiles;
-    Pair<int, int> doneTiles;
+    [HideInInspector]
+    public float grassHeight;
+
+    Pair<int> minTiles;
+    Pair<int> doneTiles;
     bool isBlockPlaced;
 
     void Awake()
     {
-        doneTiles = new Pair<int, int>();
+        doneTiles = new Pair<int>();
+        grassHeight = grassSprite.rect.height / grassSprite.pixelsPerUnit;
     }
 
     void Start()
@@ -35,10 +39,9 @@ public class Background : MonoBehaviour
 
     void RecalculateBackground()
     {
-        float grassHeight = grassSprite.rect.width / grassSprite.pixelsPerUnit;
         var maxSize = REF.map.FindMaxSize();
 
-        var doTiles = new Pair<int, int>(
+        var doTiles = new Pair<int>(
             minTiles.Left + maxSize.Left / 5 - doneTiles.Left,
             minTiles.Right + maxSize.Right / 5 - doneTiles.Right
         );
@@ -46,7 +49,7 @@ public class Background : MonoBehaviour
         new Counter(doTiles.Left - doneTiles.Left).ForEach(i => CreateColumn(-5 * i));
         new Counter(doTiles.Right - doneTiles.Right).ForEach(i => CreateColumn(5 * (i + 1)));
 
-        doneTiles = new Pair<int, int>(
+        doneTiles = new Pair<int>(
             doneTiles.Left + doTiles.Left,
             doneTiles.Right + doTiles.Right
         );
@@ -62,7 +65,6 @@ public class Background : MonoBehaviour
 
     void CreateColumn(float xvalue)
     {
-        float grassHeight = grassSprite.rect.width / grassSprite.pixelsPerUnit;
         int groundCount = REF.map.diamondLevel / 5 - 2;
 
         CreateTile(xvalue, - 5, skySprite);
@@ -73,7 +75,7 @@ public class Background : MonoBehaviour
             CreateTile(xvalue, i * 5 + grassHeight, groundSprite);
         }
 
-        CreateTile(xvalue, (groundCount + 1) * 5, diamondSprite);
+        CreateTile(xvalue, (groundCount + grassHeight - 1) * 5, diamondSprite);
     }
 
     int currentTileIndex;
@@ -90,7 +92,7 @@ public class Background : MonoBehaviour
     void CalculateMinTiles()
     {
         Camera cam = REF.cam.GetComponent<Camera>();
-        minTiles = new Pair<int, int>(
+        minTiles = new Pair<int>(
             Mathf.FloorToInt(cam.orthographicSize / 5),
             Mathf.FloorToInt((cam.orthographicSize * cam.aspect) / 5)
         );

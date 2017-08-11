@@ -10,7 +10,7 @@ public class Map : MonoBehaviour
     public Action<Room> RoomAddedEvent;
     public int diamondLevel = 20;
 
-    Pair<Side, Side> sides;
+    Pair<Side> sides;
     Action<int> SetDrillhead;
     int currentRow;
 
@@ -18,18 +18,24 @@ public class Map : MonoBehaviour
     {
         // initilize variables
         RoomAddedEvent = (_) => { };
-        sides = new Pair<Side, Side>(new Side(this, false), new Side(this, true));
+        sides = new Pair<Side>(new Side(this, false), new Side(this, true));
 
         // create static tiles
         CreateShop();
         CreateLandingSite();
+        InitializeDrillhead();
+    }
 
-        {
-            // initialize the drillhead
-            Tile drillhead = REF.tile.CreateTile("drillhead");
-            SetDrillhead = (int row) => drillhead.SetPosition(0, row);
-            SetDrillhead(0);
-        }
+    void Start()
+    {
+        REF.tile.CreateTile("shaft").SetPosition(0, 0);
+    }
+
+    void InitializeDrillhead()
+    {
+        Tile drillhead = REF.tile.CreateTile("drillhead");
+        SetDrillhead = (int row) => drillhead.SetPosition(0, row+1);
+        SetDrillhead(0);
     }
 
     public void UpdateRooms()
@@ -43,7 +49,7 @@ public class Map : MonoBehaviour
         Left.AddEmptyRow();
         Right.AddEmptyRow();
 
-        REF.tile.CreateTile("shaft").SetPosition(0, currentRow);
+        REF.tile.CreateTile("shaft").SetPosition(0, currentRow+1);
 
         SetDrillhead(++currentRow);
     }
@@ -61,9 +67,9 @@ public class Map : MonoBehaviour
         landing.SetPosition(-3, -2.25f);
     }
 
-    public Pair<int, int> FindMaxSize()
+    public Pair<int> FindMaxSize()
     {
-        return new Pair<int, int>(
+        return new Pair<int>(
             Left.FindMaxSize(),
             Right.FindMaxSize()
         );

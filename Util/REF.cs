@@ -5,7 +5,7 @@ public class REF : MonoBehaviour
 {
 
     static Dictionary<System.Type, Object> singletons = new Dictionary<System.Type, Object>();
-    static T FindReference<T>()
+    static T FindSingleton<T>()
         where T : Object
     {
         if (singletons.ContainsKey(typeof(T)))
@@ -22,27 +22,32 @@ public class REF : MonoBehaviour
 
     public static Map map
     {
-        get { return FindReference<Map>(); }
+        get { return FindSingleton<Map>(); }
     }
 
     public static GameManager game
     {
-        get { return FindReference<GameManager>(); }
+        get { return FindSingleton<GameManager>(); }
     }
 
     public static TileManager tile
     {
-        get { return FindReference<TileManager>(); }
+        get { return FindSingleton<TileManager>(); }
     }
 
     public static ConfigManager config
     {
-        get { return FindReference<ConfigManager>(); }
+        get { return FindSingleton<ConfigManager>(); }
     }
 
     public static CameraController cam
     {
-        get { return FindReference<CameraController>(); }
+        get { return FindSingleton<CameraController>(); }
+    }
+
+    public static Background back
+    {
+        get { return FindSingleton<Background>(); }
     }
 
 }
