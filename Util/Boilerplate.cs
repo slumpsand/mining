@@ -18,6 +18,7 @@ public class Counter : IEnumerator<int>, IEnumerable<int>
     public Counter(int MaxValue)
     {
         this.MaxValue = MaxValue;
+        this.Current = -1;
     }
 
     public int Current
