@@ -57,14 +57,14 @@ public class Map : MonoBehaviour
     void CreateShop()
     {
         Tile shop = REF.tile.CreateTile("base");
-        shop.SetPosition(-1, -3.25f);
+        shop.SetPosition(-1, -2);
     }
 
 
     void CreateLandingSite()
     {
         Tile landing = REF.tile.CreateTile("landing");
-        landing.SetPosition(-3, -2.25f);
+        landing.SetPosition(-3, -1);
     }
 
     public Pair<int> FindMaxSize()

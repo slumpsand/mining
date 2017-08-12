@@ -6,18 +6,16 @@ public class Background : MonoBehaviour
 {
 
     public float zPosition = 2f;
-
-    [Header("Diamond Block")]
     public float blockOffset = 3f;
 
-    [Header("Background Sprites")]
-    public Sprite groundSprite;
-    public Sprite skySprite;
-    public Sprite grassSprite;
-    public Sprite diamondSprite;
+    [Space]
+    public BackTile groundTile;
+    public BackTile skyTile;
+    public BackTile grassTile;
+    public BackTile diamondTile;
 
     [HideInInspector]
-    public float grassHeight;
+    public float tileWidth;
 
     Pair<int> minTiles;
     Pair<int> doneTiles;
@@ -26,7 +24,12 @@ public class Background : MonoBehaviour
     void Awake()
     {
         doneTiles = new Pair<int>();
-        grassHeight = grassSprite.rect.height / grassSprite.pixelsPerUnit;
+
+        if (groundTile.width != skyTile.width) throw new UnevenTileWidthException(groundTile, skyTile);
+        if (groundTile.width != grassTile.width) throw new UnevenTileWidthException(groundTile, grassTile);
+        if (groundTile.width != diamondTile.width) throw new UnevenTileWidthException(groundTile, diamondTile);
+
+        tileWidth = groundTile.width;
     }
 
     void Start()
@@ -42,12 +45,12 @@ public class Background : MonoBehaviour
         var maxSize = REF.map.FindMaxSize();
 
         var doTiles = new Pair<int>(
-            minTiles.Left + maxSize.Left / 5 - doneTiles.Left,
-            minTiles.Right + maxSize.Right / 5 - doneTiles.Right
+            Mathf.FloorToInt(minTiles.Left + maxSize.Left / tileWidth - doneTiles.Left),
+            Mathf.FloorToInt(minTiles.Right + maxSize.Right / tileWidth - doneTiles.Right)
         );
 
-        new Counter(doTiles.Left - doneTiles.Left).ForEach(i => CreateColumn(-5 * i));
-        new Counter(doTiles.Right - doneTiles.Right).ForEach(i => CreateColumn(5 * (i + 1)));
+        new Counter(doTiles.Left - doneTiles.Left).ForEach(i => CreateColumn(-tileWidth * i));
+        new Counter(doTiles.Right - doneTiles.Right).ForEach(i => CreateColumn(tileWidth * (i + 1)));
 
         doneTiles = new Pair<int>(
             doneTiles.Left + doTiles.Left,
@@ -59,7 +62,7 @@ public class Background : MonoBehaviour
             isBlockPlaced = true;
 
             REF.tile.CreateTile("target")
-                .SetPosition(-1, REF.map.diamondLevel - blockOffset + grassHeight);
+                .SetPosition(-1, REF.map.diamondLevel - blockOffset + grassTile.height);
         }
     }
 
@@ -67,15 +70,15 @@ public class Background : MonoBehaviour
     {
         int groundCount = REF.map.diamondLevel / 5 - 2;
 
-        CreateTile(xvalue, - 5, skySprite);
-        CreateTile(xvalue, 0, grassSprite);
+        CreateTile(xvalue, - skyTile.height, skyTile.sprite);
+        CreateTile(xvalue, 0, grassTile.sprite);
 
         for (int i = 0; i < groundCount; i++)
         {
-            CreateTile(xvalue, i * 5 + grassHeight, groundSprite);
+            CreateTile(xvalue, i * groundTile.height + grassTile.height, groundTile.sprite);
         }
 
-        CreateTile(xvalue, (groundCount + grassHeight - 1) * 5, diamondSprite);
+        CreateTile(xvalue, (groundCount - 1) * groundTile.height + grassTile.height, diamondTile.sprite);
     }
 
     int currentTileIndex;
@@ -93,8 +96,8 @@ public class Background : MonoBehaviour
     {
         Camera cam = REF.cam.GetComponent<Camera>();
         minTiles = new Pair<int>(
-            Mathf.FloorToInt(cam.orthographicSize / 5),
-            Mathf.FloorToInt((cam.orthographicSize * cam.aspect) / 5)
+            Mathf.FloorToInt(cam.orthographicSize / tileWidth),
+            Mathf.FloorToInt((cam.orthographicSize * cam.aspect) / tileWidth)
         );
     }
 

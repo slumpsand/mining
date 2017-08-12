@@ -20,7 +20,7 @@ public class Row : IEnumerable
 
     public void AddRoom(Room room)
     {
-        REF.tile.AddTile(room.SpriteName, side.isRight, Size(), index + REF.back.grassHeight, room.Size);
+        REF.tile.AddTile(room.SpriteName, side.isRight, Size(), index + REF.back.grassTile.height, room.Size);
 
         room.row = this;
         room.index = Size();
